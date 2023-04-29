@@ -2,6 +2,7 @@ import './css/styles.css';
 import Notiflix from 'notiflix';
 import fetchPhotos from './fetchPhotos';
 import simpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { makeGalleryMarkup } from './galleryMarkup';
 import { resetMarkup } from './galleryMarkup';
 
@@ -12,6 +13,8 @@ const gallery = document.querySelector('.gallery');
 searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', onLoadMore);
 
+loadMoreBtn.classList.add('is-hidden');
+
 async function onSearch(event) {
   event.preventDefault();
 
@@ -19,6 +22,7 @@ async function onSearch(event) {
 
   const searchQuery = event.currentTarget.elements.searchQuery.value;
   if (!searchQuery) {
+    loadMoreBtn.classList.add('is-hidden');
     return;
   }
   event.currentTarget.elements.searchQuery.value = '';
@@ -43,17 +47,18 @@ async function loadPhotos(searchQuery, pageNumber) {
     if (pageNumber === 1) {
       makeGalleryMarkup(data.hits);
       const lightbox = new simpleLightbox('.gallery a', {
-        captions: true,
-        captionsData: 'alt',
+        captionData: 'alt',
+        captionPosition: 'bottom',
         captionDelay: 250,
       });
       loadMoreBtn.dataset.searchQuery = searchQuery;
       loadMoreBtn.dataset.pageNumber = pageNumber;
       loadMoreBtn.classList.remove('is-hidden');
-    } else {
-      makeGalleryMarkup(data.hits, true);
-      loadMoreBtn.dataset.pageNumber = pageNumber;
     }
+    makeGalleryMarkup(data.hits, true);
+    loadMoreBtn.dataset.pageNumber = pageNumber;
+    loadMoreBtn.classList.remove('is-hidden');
+
     if (pageNumber * data.hits.length >= data.totalHits) {
       loadMoreBtn.classList.add('is-hidden');
       Notiflix.Notify.failure(

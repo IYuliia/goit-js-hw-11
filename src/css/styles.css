@@ -80,10 +80,6 @@ body {
   line-height: 1.5;
 }
 
-.is-hidden {
-  display: none;
-}
-
 .load-more {
   display: block;
   margin: 20px auto;
@@ -93,4 +89,8 @@ body {
   padding: 10px 20px;
   border-radius: 5px;
   border: none;
+}
+
+.is-hidden {
+  display: none;
 }
