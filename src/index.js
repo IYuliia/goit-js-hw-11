@@ -9,6 +9,7 @@ import { resetMarkup } from './galleryMarkup';
 const searchForm = document.querySelector('#search-form');
 const loadMoreBtn = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
+const perPage = 40;
 
 searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', onLoadMore);
@@ -51,19 +52,23 @@ async function loadPhotos(searchQuery, pageNumber) {
         captionPosition: 'bottom',
         captionDelay: 250,
       });
+      lightbox.refresh();
       loadMoreBtn.dataset.searchQuery = searchQuery;
       loadMoreBtn.dataset.pageNumber = pageNumber;
       loadMoreBtn.classList.remove('is-hidden');
+    } else {
+      makeGalleryMarkup(data.hits, true);
+      loadMoreBtn.dataset.pageNumber = pageNumber;
+      loadMoreBtn.classList.remove('is-hidden');
     }
-    makeGalleryMarkup(data.hits, true);
-    loadMoreBtn.dataset.pageNumber = pageNumber;
-    loadMoreBtn.classList.remove('is-hidden');
-
-    if (pageNumber * data.hits.length >= data.totalHits) {
-      loadMoreBtn.classList.add('is-hidden');
+    const lastPage = Math.ceil(totalHits / perPage);
+    console.log('lastPage', lastPage);
+    console.log('pageNumber', pageNumber);
+    if (lastPage === pageNumber) {
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results."
       );
+      loadMoreBtn.classList.add('is-hidden');
     }
   } catch (error) {
     console.log(error);
