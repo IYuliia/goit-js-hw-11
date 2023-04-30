@@ -16,9 +16,14 @@ loadMoreBtn.addEventListener('click', onLoadMore);
 
 loadMoreBtn.classList.add('is-hidden');
 
+const lightbox = new simpleLightbox('.gallery a', {
+  captionData: 'alt',
+  captionPosition: 'bottom',
+  captionDelay: 250,
+});
+
 async function onSearch(event) {
   event.preventDefault();
-
   resetMarkup();
 
   const searchQuery = event.currentTarget.elements.searchQuery.value;
@@ -47,18 +52,15 @@ async function loadPhotos(searchQuery, pageNumber) {
     }
     if (pageNumber === 1) {
       makeGalleryMarkup(data.hits);
-      const lightbox = new simpleLightbox('.gallery a', {
-        captionData: 'alt',
-        captionPosition: 'bottom',
-        captionDelay: 250,
-      });
       lightbox.refresh();
       loadMoreBtn.dataset.searchQuery = searchQuery;
       loadMoreBtn.dataset.pageNumber = pageNumber;
       loadMoreBtn.classList.remove('is-hidden');
     } else {
       makeGalleryMarkup(data.hits, true);
+
       loadMoreBtn.dataset.pageNumber = pageNumber;
+      lightbox.refresh();
       loadMoreBtn.classList.remove('is-hidden');
     }
     const lastPage = Math.ceil(totalHits / perPage);
